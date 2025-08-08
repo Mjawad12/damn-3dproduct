@@ -110,7 +110,7 @@ function MainPage() {
               onDecline={() => setDpr(1.3)}
             />
             {/* uncomment to see performance! */}
-            <Stats />
+            {/* <Stats /> */}
             <Preload all />
             <ModelViewer
               cameraRef={cameraRef}

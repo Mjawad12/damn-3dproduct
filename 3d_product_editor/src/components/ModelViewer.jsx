@@ -35,7 +35,7 @@ function ModelViewer({ cameraRef, canvas, orbitRef }) {
 
   return (
     <>
-      <mesh rotation={[-1.5, 0, 0]} scale={smScreen ? 0.7 : 1}>
+      <mesh rotation={[-1.5, 0, 0]} scale={smScreen ? 0.5 : 1}>
         <Center
           position={
             selectedModel.current === "Mug" ? [-0.064, 0, 0] : [0, 0, 0]
