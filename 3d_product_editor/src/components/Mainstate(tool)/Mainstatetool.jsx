@@ -139,7 +139,7 @@ function Mainstatetool({ children }) {
   }, []);
   //  For Optimizations
   const [update, setupdate] = useState(false);
-  const [unsportedDevice, setunsportedDevice] = useState(false);
+  const unsportedDevice = useRef(false);
   const updateTextureFunc = () => {
     if (unsportedDevice) {
       setupdate(true);
@@ -157,7 +157,8 @@ function Mainstatetool({ children }) {
     if (chromeAgent && safariAgent) {
       safariAgent = false;
     }
-    setunsportedDevice(safariAgent || firefoxAgent || window.innerWidth < 400);
+    unsportedDevice.current =
+      safariAgent || firefoxAgent || window.innerWidth < 400;
   };
   useEffect(() => {
     DetectDevice();
@@ -175,7 +176,7 @@ function Mainstatetool({ children }) {
     left: 255,
     scaleX: 0.346452328159645,
     scaleY: 0.346452328159645,
-    rotation: 0,
+    angle: 0,
     typeObj: "image",
   });
 
@@ -459,7 +460,7 @@ function Mainstatetool({ children }) {
             left: e.selected[0].left,
             top: e.selected[0].top,
             scale: e.selected[0].width * e.selected[0].scaleX,
-            rotation: e.selected[0].angle,
+            angle: e.selected[0].angle,
             url: e.selected[0].url,
             _id: e.selected[0]._id,
             width: e.selected[0].width,
@@ -519,7 +520,7 @@ function Mainstatetool({ children }) {
             left: e.selected[0].left,
             top: e.selected[0].top,
             scale: e.selected[0].width * e.selected[0].scaleX,
-            rotation: e.selected[0].angle,
+            angle: e.selected[0].angle,
             url: e.selected[0].url,
             _id: e.selected[0]._id,
             width: e.selected[0].width,
@@ -720,7 +721,7 @@ function Mainstatetool({ children }) {
         selectedImage,
         update,
         setupdate,
-        unsportedDevice,
+        unsportedDevice: unsportedDevice.current,
         smScreen,
         updateTextureFunc,
         imagesDisplayed,
