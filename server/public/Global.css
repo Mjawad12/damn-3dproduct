@@ -777,6 +777,12 @@ button {
 }
 
 @media (max-width: 768px) {
+  .header {
+    overflow: hidden;
+  }
+  #iframe_div {
+    height: 400px !important;
+  }
   .sidebar {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
