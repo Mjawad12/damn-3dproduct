@@ -75,7 +75,7 @@ function Mainstatetool({ children }) {
   //  For Small Screen
   const [smScreen, setsmScreen] = useState(false);
   useEffect(() => {
-    setsmScreen(window.innerWidth < 1062);
+    setsmScreen(window.innerWidth < 600);
   }, []);
 
   useEffect(() => {
