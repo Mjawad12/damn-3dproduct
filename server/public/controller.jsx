@@ -84,7 +84,7 @@ document.querySelector(".product-buttons").addEventListener("click", (e) => {
       Y_slider.max = 707;
     }
 
-    Canvas.src = `http://localhost:3000/?model=${SELECTED_MODEL}`;
+    Canvas.src = `https://damn-3dproduct-mpb8.vercel.app/?model=${SELECTED_MODEL}`;
     document.querySelector(".loading-indicator").style.display = "block";
   }
 });
@@ -597,7 +597,10 @@ rot_slider_image.addEventListener("input", (e) => {
 //  changes to model
 function postToIframe(data) {
   if (Canvas && Canvas.contentWindow) {
-    Canvas.contentWindow.postMessage(data, "http://localhost:3000");
+    Canvas.contentWindow.postMessage(
+      data,
+      "https://damn-3dproduct-mpb8.vercel.app"
+    );
   }
 }
 //  changes to Text

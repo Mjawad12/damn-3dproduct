@@ -597,6 +597,10 @@ function Mainstatetool({ children }) {
       if (!payload) {
         return;
       }
+      if (event.origin !== process.env.NEXT_PUBLIC_URL) {
+        console.log("Not Allowed");
+        return;
+      }
       console.log(payload);
       switch (type) {
         case "add-text":
