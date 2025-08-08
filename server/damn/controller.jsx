@@ -5,7 +5,7 @@ let ProductColor = "#ffffff";
 let AnimatedCanvas = false;
 
 const Canvas = document.querySelector("#canvas");
-Canvas.src = `http://localhost:3000/?model=${SELECTED_MODEL}`;
+Canvas.src = `https://damn-3dproduct-mpb8.vercel.app/?model=${SELECTED_MODEL}`;
 
 // enable loading anim
 document.querySelector(".loading-indicator").style.display = "block";

@@ -9,6 +9,8 @@ import React, {
 import { fabric } from "fabric";
 import { v4 } from "uuid";
 
+const URL_SERVER = process.env.NEXT_PUBLIC_URL;
+
 const ContextTool = createContext();
 
 function Mainstatetool({ children }) {
@@ -390,7 +392,7 @@ function Mainstatetool({ children }) {
                 fill: e.target.fill,
               },
             },
-            "http://127.0.0.1:5500"
+            URL_SERVER
           );
           break;
         case "image":
@@ -415,7 +417,7 @@ function Mainstatetool({ children }) {
                 scale: e.target.width * e.target.scaleX,
               },
             },
-            "http://127.0.0.1:5500"
+            URL_SERVER
           );
           break;
       }
@@ -449,7 +451,7 @@ function Mainstatetool({ children }) {
                 fontSize: e.selected[0].scaleX,
               },
             },
-            "http://127.0.0.1:5500"
+            URL_SERVER
           );
           break;
         case "image":
@@ -474,7 +476,7 @@ function Mainstatetool({ children }) {
                 scale: e.selected[0].width * e.selected[0].scaleX,
               },
             },
-            "http://127.0.0.1:5500"
+            URL_SERVER
           );
           break;
       }
@@ -509,7 +511,7 @@ function Mainstatetool({ children }) {
                 fontSize: e.selected[0].scaleX,
               },
             },
-            "http://127.0.0.1:5500"
+            URL_SERVER
           );
           break;
         case "image":
@@ -534,7 +536,7 @@ function Mainstatetool({ children }) {
                 scale: e.selected[0].width * e.selected[0].scaleX,
               },
             },
-            "http://127.0.0.1:5500"
+            URL_SERVER
           );
           break;
       }
@@ -556,7 +558,7 @@ function Mainstatetool({ children }) {
           type: "select-clear",
           payload: {},
         },
-        "http://127.0.0.1:5500"
+        URL_SERVER
       );
     });
 
@@ -703,7 +705,6 @@ function Mainstatetool({ children }) {
     <ContextTool.Provider
       value={{
         UpdateText,
-        // setselectedText,
         selectedText,
         canvas: canvas.current,
         addTextLayer,
