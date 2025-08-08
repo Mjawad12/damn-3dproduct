@@ -287,7 +287,7 @@ function Mainstatetool({ children }) {
     (
       top = selectedImage.current.top,
       left = selectedImage.current.left,
-      rotation = selectedImage.current.rotation,
+      angle = selectedImage.current.angle,
       scale
     ) => {
       if (
@@ -305,7 +305,7 @@ function Mainstatetool({ children }) {
         canvas.current.getActiveObject().set("top", +top);
         canvas.current.getActiveObject().set("left", +left);
 
-        canvas.current.getActiveObject().set("angle", +rotation);
+        canvas.current.getActiveObject().set("angle", +angle);
         canvas.current.renderAll();
         updateTextureFunc();
       }
