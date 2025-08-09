@@ -73,10 +73,21 @@ const ModelWrapper = ({ Model, cameraRef, orbitRef }) => {
       };
     };
 
+    let isMouseDown = false;
+    let objMoving = false;
     container.addEventListener("mousedown", onMouseEvt, false);
+    selectedModel.current === "Mug" &&
+      canvas.on("object:moving", function (event) {
+        objMoving = true;
+      });
+    selectedModel.current === "Mug" &&
+      canvas.on("object:modified", function (event) {
+        objMoving = false;
+      });
 
     function onMouseEvt(evt) {
       evt.preventDefault();
+      isMouseDown = true;
       const positionOnScene = getPositionOnScene(container, evt);
 
       if (positionOnScene) {
@@ -94,10 +105,60 @@ const ModelWrapper = ({ Model, cameraRef, orbitRef }) => {
       }
     }
 
+    window.addEventListener(
+      "mouseup",
+      (evt) => {
+        if (!isMouseDown) return;
+        isMouseDown = false;
+        const simEvt = new MouseEvent("mouseup", {
+          clientX: evt.clientX,
+          clientY: evt.clientY,
+        });
+
+        canvas.upperCanvasEl.dispatchEvent(simEvt);
+      },
+      false
+    );
+
     function getPositionOnScene(sceneContainer, evt) {
       var array = getMousePosition(container, evt.clientX, evt.clientY);
       onClickPosition.fromArray(array);
       var intersects = getIntersects(onClickPosition, scene.children);
+
+      if (
+        selectedModel.current === "Poster" &&
+        intersects[0].object.name === "Plane006"
+      ) {
+        intersects[0] = null;
+      }
+
+      if (
+        selectedModel.current === "Mug" &&
+        intersects[0].object.name !== "CupDrawArea"
+      ) {
+        !objMoving && canvas.discardActiveObject();
+        intersects[0] = null;
+      }
+
+      if (
+        selectedModel.current === "Shirt" &&
+        intersects[0].object.name !== "Object_4"
+      ) {
+        return null;
+      }
+      if (
+        selectedModel.current === "Cap" &&
+        intersects[0].object.name !== "10131_BaseballCap_v2_L3"
+      ) {
+        return null;
+      }
+
+      if (
+        selectedModel.current === "Poster" &&
+        intersects[0].object.name !== "Cube004"
+      ) {
+        return null;
+      }
 
       if (intersects.length > 0 && intersects[0].uv) {
         var uv = intersects[0].uv;
@@ -163,7 +224,6 @@ const CanvasTexture = React.memo(({ flip }) => {
   });
 
   const updateTexture = () => {
-    console.log("modified");
     canvas.renderAll();
     textureRef.current.needsUpdate = true;
     invalidate();

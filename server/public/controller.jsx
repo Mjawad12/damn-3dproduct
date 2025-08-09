@@ -3,6 +3,7 @@ let SELECTED_MODEL = "Mug";
 let SelectedCustomization = "Image";
 let ProductColor = "#ffffff";
 let AnimatedCanvas = false;
+let IniModel = true;
 
 const Canvas = document.querySelector("#canvas");
 Canvas.src = `https://damn-3dproduct-mpb8.vercel.app/?model=${SELECTED_MODEL}`;
@@ -39,16 +40,27 @@ const rot_slider_image = document.querySelector(
 );
 
 Canvas.addEventListener("load", (e) => {
+  console.log("loaded");
   document.querySelector(".loading-indicator").style.display = "none";
+  if (!IniModel) {
+    setTimeout(() => {
+      console.log("sent");
+      postToIframe({
+        type: "ini-layers",
+        payload: { textLayers: Texts, imageLayers: Images },
+      });
+    }, 1000);
+  }
 });
 
 document.querySelector(".product-buttons").addEventListener("click", (e) => {
   if (SELECTED_MODEL !== e.target.getAttribute("data-product")) {
+    IniModel = false;
     SELECTED_MODEL = e.target.getAttribute("data-product");
-    Texts.length = 0;
-    Images.length = 0;
-    document.querySelectorAll(".text_layer").forEach((it) => it.remove());
-    document.querySelectorAll(".image_layer").forEach((it) => it.remove());
+    // Texts.length = 0;
+    // Images.length = 0;
+    // document.querySelectorAll(".text_layer").forEach((it) => it.remove());
+    // document.querySelectorAll(".image_layer").forEach((it) => it.remove());
     if (SELECTED_MODEL === "Mug") {
       size_slider_image.max = 920;
       size_slider_image.min = 100;
@@ -214,6 +226,7 @@ const CreateTextLayer = (text, id) => {
     const index = Texts.findIndex((ele) => ele._id == id);
     Texts.splice(index, 1);
     textLayer.remove();
+    notifications.show("Layer Deleted!", "success");
     postToIframe({ type: "delete-layer", payload: { _id: id } });
   };
 
@@ -236,6 +249,10 @@ const CreateTextLayer = (text, id) => {
     const index = Texts.findIndex((ele) => ele._id == id);
     if (index >= 0) {
       Texts[index].locked = isLocked;
+      notifications.show(
+        isLocked ? "Layer locked!" : "Layer unlocked",
+        "success"
+      );
       postToIframe({
         type: "lock-layer",
         payload: { _id: id, lock: isLocked },
@@ -307,6 +324,7 @@ const CreateImageLayer = (url, id) => {
     const index = Images.findIndex((ele) => ele._id == id);
     Images.splice(index, 1);
     imageLayer.remove();
+    notifications.show("Layer Deleted!", "success");
     postToIframe({ type: "delete-layer", payload: { _id: id } });
   };
 
@@ -329,6 +347,10 @@ const CreateImageLayer = (url, id) => {
     const index = Images.findIndex((ele) => ele._id == id);
     if (index >= 0) {
       Images[index].locked = isLocked;
+      notifications.show(
+        isLocked ? "Layer locked!" : "Layer unlocked",
+        "success"
+      );
       postToIframe({
         type: "lock-layer",
         payload: { _id: id, lock: isLocked },
@@ -597,6 +619,7 @@ rot_slider_image.addEventListener("input", (e) => {
 // Export design
 document.querySelector("#export-view-btn").addEventListener("click", (e) => {
   postToIframe({ type: "export-data", payload: {} });
+  notifications.show("Design exported!", "success");
 });
 
 document.querySelector("#reset-view-btn").addEventListener("click", (e) => {
@@ -604,7 +627,7 @@ document.querySelector("#reset-view-btn").addEventListener("click", (e) => {
   Images.length = 0;
   document.querySelectorAll(".text_layer").forEach((it) => it.remove());
   document.querySelectorAll(".image_layer").forEach((it) => it.remove());
-
+  notifications.show("View has been reset!", "success");
   postToIframe({ type: "reset-view", payload: {} });
 });
 
@@ -656,7 +679,7 @@ window.addEventListener("message", (event) => {
       Y_slider_image.value = payload.top;
       size_slider_image.value = payload.scale;
       rot_slider_image.value = payload.angle;
-      Images[selectedImage] = { ...payload };
+      Images[selectedImage] = { ...Images[selectedImage], ...payload };
       break;
     case "export-image":
       const link = document.createElement("a");

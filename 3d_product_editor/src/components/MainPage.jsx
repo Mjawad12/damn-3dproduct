@@ -31,11 +31,12 @@ function MainPage() {
     animatedCanvas,
     selectedModel,
     threeCanvas,
+    orbitRef,
   } = useContext(ContextTool);
 
   const [dpr, setDpr] = useState(1.5);
   const [contextAttributes, setcontextAttributes] = useState({});
-  const orbitRef = useRef();
+
   const cameraRef = useRef();
   const isSafari = () => {
     const userAgent = navigator.userAgent;
@@ -91,7 +92,7 @@ function MainPage() {
             />
             <OrbitControls
               enablePan={true}
-              enableRotate={!selectedObject}
+              enableRotate={true}
               maxDistance={1.2}
               minDistance={0.3}
               ref={orbitRef}

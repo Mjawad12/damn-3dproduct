@@ -28,7 +28,11 @@ export function Mug(props) {
 
   return (
     <group {...props} dispose={null}>
-      <group name="Scene" scale={0.16} rotation={[Math.PI / 2.099, 0, 0]}>
+      <group
+        name="Scene"
+        scale={0.16}
+        rotation={[Math.PI / 2.099, Math.PI / 0.85, 0]}
+      >
         <mesh
           name="Cup"
           castShadow
@@ -43,6 +47,8 @@ export function Mug(props) {
                 : decreaseOpacity(canvas.backgroundColor, 0.5)
             }
           />
+
+          {/* <CanvasTexture /> */}
         </mesh>
 
         <mesh

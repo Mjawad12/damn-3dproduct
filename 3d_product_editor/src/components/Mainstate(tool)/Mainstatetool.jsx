@@ -15,6 +15,7 @@ const ContextTool = createContext();
 
 function Mainstatetool({ children }) {
   const threeCanvas = useRef(null);
+  const orbitRef = useRef();
   const selectedModel = useRef("Shirt");
   const [imagesDisplayed, setimagesDisplayed] = useState([]);
   const [textsCanvas, setTextsCanvas] = useState([]);
@@ -66,11 +67,11 @@ function Mainstatetool({ children }) {
   const ImagePos = {
     Shirt: {
       x: 230,
-      y: 580,
+      y: 480,
     },
     Mug: { x: 450, y: 450 },
-    Cap: { x: 525, y: 800 },
-    Poster: { x: 480, y: 430 },
+    Cap: { x: 525, y: 750 },
+    Poster: { x: 470, y: 430 },
   };
 
   //  For Small Screen
@@ -216,9 +217,6 @@ function Mainstatetool({ children }) {
     new fabric.Image.fromURL(
       image,
       (img) => {
-        const targetWidth = ImageSizes[selectedModel.current].width;
-        const targetHeight = ImageSizes[selectedModel.current].height;
-
         img.set({
           top: 533,
           left: 334,
@@ -229,12 +227,26 @@ function Mainstatetool({ children }) {
           angle: angles[selectedModel.current],
         });
 
-        img.scaleX = targetWidth / img.width;
-        img.scaleY = targetHeight / img.height;
+        const targetWidth = ImageSizes[selectedModel.current].width;
+        const targetHeight = ImageSizes[selectedModel.current].height;
+        if (
+          selectedModel.current === "Mug" ||
+          selectedModel.current === "Poster"
+        ) {
+          img.scaleX = targetWidth / img.width;
+          img.scaleY = targetHeight / img.height;
+        } else {
+          const scaleFactor = Math.min(
+            targetWidth / img.width,
+            targetHeight / img.height
+          );
+
+          img.scaleX = scaleFactor;
+          img.scaleY = scaleFactor;
+        }
 
         imgId = img.id;
-        // img.scaleToWidth(ImageSizes[selectedModel.current].width);
-        // img.scaleToHeight(ImageSizes[selectedModel.current].height);
+
         img.setPositionByOrigin(
           ImagePos[selectedModel.current],
           "center",
@@ -298,10 +310,20 @@ function Mainstatetool({ children }) {
       ) {
         console.log(selectedImage.current);
         if (scale) {
-          const scaleX = +scale / canvas.current.getActiveObject().width;
-          const scaleY = +scale / canvas.current.getActiveObject().height;
-          canvas.current.getActiveObject().set("scaleX", scaleX);
-          canvas.current.getActiveObject().set("scaleY", scaleY);
+          if (
+            selectedModel.current === "Mug" ||
+            selectedModel.current === "Poster"
+          ) {
+            const scaleX = +scale / canvas.current.getActiveObject().width;
+            const scaleY = +scale / canvas.current.getActiveObject().height;
+            canvas.current.getActiveObject().set("scaleX", scaleX);
+            canvas.current.getActiveObject().set("scaleY", scaleY);
+          } else {
+            const uniformScale =
+              +scale / canvas.current.getActiveObject().width;
+            canvas.current.getActiveObject().set("scaleX", uniformScale);
+            canvas.current.getActiveObject().set("scaleY", uniformScale);
+          }
         }
 
         canvas.current.getActiveObject().set("top", +top);
@@ -330,6 +352,7 @@ function Mainstatetool({ children }) {
 
     canva.on("object:modified", (e) => {
       console.log(e.target);
+      orbitRef.current.enableRotate = true;
       if (
         e.target.top == 0 ||
         e.target.left == 0 ||
@@ -338,8 +361,15 @@ function Mainstatetool({ children }) {
         Number.isNaN(e.target.scaleX) ||
         Number.isNaN(e.target.scaleY)
       ) {
-        e.target.set("scaleX", 1);
-        e.target.set("scaleY", 1);
+        if (e.target.typeObj === "text") {
+          e.target.set("scaleX", 1);
+          e.target.set("scaleY", 1);
+        } else {
+          const targetWidth = ImageSizes[selectedModel.current].width;
+          const targetHeight = ImageSizes[selectedModel.current].height;
+          e.target.set("scaleX", targetWidth / img.width);
+          e.target.set("scaleY", targetHeight / img.height);
+        }
 
         e.target.setPositionByOrigin(
           positions[selectedModel.current],
@@ -402,7 +432,7 @@ function Mainstatetool({ children }) {
             left: e.target.left,
             top: e.target.top,
             scale: e.target.width * e.target.scaleX,
-            rotation: e.target.angle,
+            angle: e.target.angle,
             url: e.target.url,
             _id: e.target._id,
             width: e.target.width,
@@ -428,6 +458,7 @@ function Mainstatetool({ children }) {
     });
 
     canva.on("selection:created", (e) => {
+      // orbitRef.current.enableRotate = false;
       setselectedObject(e.selected[0]);
       switch (e.selected[0].typeObj) {
         case "text":
@@ -488,7 +519,7 @@ function Mainstatetool({ children }) {
 
     canva.on("selection:updated", (e) => {
       setselectedObject({ ...e.selected[0] });
-
+      // orbitRef.current.enableRotate = false;
       switch (e.selected[0].typeObj) {
         case "text":
           selectedText.current = {
@@ -545,7 +576,21 @@ function Mainstatetool({ children }) {
       updateTextureFunc();
     });
 
+    canva.on("mouse:down:before", (e) => {
+      if (e.target) {
+        orbitRef.current.enableRotate = false;
+      } else {
+        orbitRef.current.enableRotate = true;
+      }
+    });
+
+    canva.on("mouse:up:before", (e) => {
+      orbitRef.current.enableRotate = true;
+    });
+
     canva.on("selection:cleared", () => {
+      orbitRef.current.enableRotate = true;
+
       setselectedObject(false);
       selectedImage.current = {
         ...selectedImage.current,
@@ -562,6 +607,7 @@ function Mainstatetool({ children }) {
         },
         URL_SERVER
       );
+      canva.renderAll();
     });
 
     // click checker
@@ -646,6 +692,32 @@ function Mainstatetool({ children }) {
           break;
         case "rotate-control":
           setanimatedCanvas(payload.enable);
+          if (payload.enable) {
+            canvas.current.getObjects().forEach((it) =>
+              it.set({
+                selectable: false,
+                evented: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                lockRotation: true,
+                lockScalingX: true,
+                lockScalingY: true,
+              })
+            );
+          } else {
+            canvas.current.getObjects().forEach((it) =>
+              it.set({
+                selectable: true,
+                evented: true,
+                lockMovementX: false,
+                lockMovementY: false,
+                lockRotation: false,
+                lockScalingX: false,
+                lockScalingY: false,
+              })
+            );
+          }
+
           break;
         case "delete-layer":
           canvas.current.remove(
@@ -692,7 +764,12 @@ function Mainstatetool({ children }) {
         case "reset-view":
           canvas.current.clear();
           changeColor("#ffffff");
-
+          break;
+        case "ini-layers":
+          const TextsLay = payload.textLayers;
+          const ImagesLay = payload.imageLayers;
+          TextsLay.forEach((it) => addTextLayer(it.text, it._id));
+          ImagesLay.forEach((it) => addImageLayer(it.url, it.url, it._id));
           break;
       }
     },
@@ -748,6 +825,7 @@ function Mainstatetool({ children }) {
         setTextsCanvas,
         selectedModel,
         threeCanvas,
+        orbitRef,
       }}
     >
       {children}
