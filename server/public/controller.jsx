@@ -594,6 +594,20 @@ rot_slider_image.addEventListener("input", (e) => {
   });
 });
 
+// Export design
+document.querySelector("#export-view-btn").addEventListener("click", (e) => {
+  postToIframe({ type: "export-data", payload: {} });
+});
+
+document.querySelector("#reset-view-btn").addEventListener("click", (e) => {
+  Texts.length = 0;
+  Images.length = 0;
+  document.querySelectorAll(".text_layer").forEach((it) => it.remove());
+  document.querySelectorAll(".image_layer").forEach((it) => it.remove());
+
+  postToIframe({ type: "reset-view", payload: {} });
+});
+
 //  changes to model
 function postToIframe(data) {
   if (Canvas && Canvas.contentWindow) {
@@ -643,6 +657,12 @@ window.addEventListener("message", (event) => {
       size_slider_image.value = payload.scale;
       rot_slider_image.value = payload.angle;
       Images[selectedImage] = { ...payload };
+      break;
+    case "export-image":
+      const link = document.createElement("a");
+      link.href = payload.url;
+      link.download = "Exported Design.png";
+      link.click();
       break;
   }
 });

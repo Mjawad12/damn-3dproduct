@@ -30,8 +30,9 @@ function MainPage() {
     canvas,
     animatedCanvas,
     selectedModel,
+    threeCanvas,
   } = useContext(ContextTool);
-  const threeCanvas = useRef(null);
+
   const [dpr, setDpr] = useState(1.5);
   const [contextAttributes, setcontextAttributes] = useState({});
   const orbitRef = useRef();
@@ -55,11 +56,6 @@ function MainPage() {
   useEffect(() => {
     setcontextAttributes(getWebGLContextAttributes());
   }, []);
-
-  useEffect(() => {
-    console.log("here");
-    console.log(animatedCanvas);
-  }, [animatedCanvas]);
 
   return (
     <>

@@ -14,6 +14,7 @@ const URL_SERVER = process.env.NEXT_PUBLIC_URL;
 const ContextTool = createContext();
 
 function Mainstatetool({ children }) {
+  const threeCanvas = useRef(null);
   const selectedModel = useRef("Shirt");
   const [imagesDisplayed, setimagesDisplayed] = useState([]);
   const [textsCanvas, setTextsCanvas] = useState([]);
@@ -678,6 +679,21 @@ function Mainstatetool({ children }) {
             });
           }
           break;
+        case "export-data":
+          const url = threeCanvas.current.toDataURL("image/png");
+          window.parent.postMessage(
+            {
+              type: "export-image",
+              payload: { url: url },
+            },
+            URL_SERVER
+          );
+          break;
+        case "reset-view":
+          canvas.current.clear();
+          changeColor("#ffffff");
+
+          break;
       }
     },
     [selectedText]
@@ -731,6 +747,7 @@ function Mainstatetool({ children }) {
         textsCanvas,
         setTextsCanvas,
         selectedModel,
+        threeCanvas,
       }}
     >
       {children}
