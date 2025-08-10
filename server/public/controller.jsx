@@ -57,10 +57,9 @@ document.querySelector(".product-buttons").addEventListener("click", (e) => {
   if (SELECTED_MODEL !== e.target.getAttribute("data-product")) {
     IniModel = false;
     SELECTED_MODEL = e.target.getAttribute("data-product");
-    // Texts.length = 0;
-    // Images.length = 0;
-    // document.querySelectorAll(".text_layer").forEach((it) => it.remove());
-    // document.querySelectorAll(".image_layer").forEach((it) => it.remove());
+    Texts.forEach((it) => (it.prevRotation = undefined));
+    Images.forEach((it) => (it.prevRotation = undefined));
+
     if (SELECTED_MODEL === "Mug") {
       size_slider_image.max = 920;
       size_slider_image.min = 100;
@@ -661,6 +660,7 @@ window.addEventListener("message", (event) => {
   switch (type) {
     case "update-text":
       selectedText = Texts.findIndex((ele) => ele._id === payload._id);
+      updateSelectedLayer();
       console.log(selectedText);
       X_slider.value = payload.left;
       Y_slider.value = payload.top;
@@ -671,9 +671,13 @@ window.addEventListener("message", (event) => {
     case "select-clear":
       selectedText = false;
       selectedImage = false;
+      document
+        .querySelector(".selected_layer")
+        ?.classList.remove("selected_layer");
       break;
     case "update-image":
       selectedImage = Images.findIndex((ele) => ele._id === payload._id);
+      updateSelectedLayer(payload);
       console.log(selectedImage);
       X_slider_image.value = payload.left;
       Y_slider_image.value = payload.top;
@@ -689,3 +693,10 @@ window.addEventListener("message", (event) => {
       break;
   }
 });
+
+const updateSelectedLayer = (payload) => {
+  document.querySelector(".selected_layer")?.classList.remove("selected_layer");
+  document
+    .querySelector(`[data-id='${payload._id}']`)
+    .classList.add("selected_layer");
+};

@@ -965,3 +965,7 @@ button {
   flex-direction: column;
   gap: 5px;
 }
+
+.selected_layer {
+  border: 2px solid green !important;
+}
