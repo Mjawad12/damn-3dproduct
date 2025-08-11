@@ -6,7 +6,11 @@ export function Cap(props) {
   const { nodes, materials } = useGLTF("/Cap.glb");
   return (
     <group {...props} dispose={null}>
-      <group name="Scene" rotation={[Math.PI / 2, 0, 0]}>
+      <group
+        name="Scene"
+        rotation={[Math.PI / 1.8, -Math.PI / 5, Math.PI / 35]}
+        scale={0.95}
+      >
         <mesh
           name="10131_BaseballCap_v2_L3"
           castShadow

@@ -59,7 +59,7 @@ function Mainstatetool({ children }) {
       height: 250,
     },
     Poster: {
-      width: 560,
+      width: 920,
       height: 560,
     },
   };
@@ -229,12 +229,19 @@ function Mainstatetool({ children }) {
 
         const targetWidth = ImageSizes[selectedModel.current].width;
         const targetHeight = ImageSizes[selectedModel.current].height;
-        if (
-          selectedModel.current === "Mug" ||
-          selectedModel.current === "Poster"
-        ) {
-          img.scaleX = targetWidth / img.width;
-          img.scaleY = targetHeight / img.height;
+        if (selectedModel.current === "Mug") {
+          const scaleFactor = Math.min(
+            targetWidth / img.width,
+            targetHeight / img.height
+          );
+
+          img.scaleX = scaleFactor;
+          img.scaleY = scaleFactor * 2;
+        } else if (selectedModel.current === "Poster") {
+          const scaleFactor = targetWidth / img.width;
+
+          img.scaleX = scaleFactor * 1.5;
+          img.scaleY = scaleFactor;
         } else {
           const scaleFactor = Math.min(
             targetWidth / img.width,
@@ -310,14 +317,16 @@ function Mainstatetool({ children }) {
       ) {
         console.log(selectedImage.current);
         if (scale) {
-          if (
-            selectedModel.current === "Mug" ||
-            selectedModel.current === "Poster"
-          ) {
-            const scaleX = +scale / canvas.current.getActiveObject().width;
-            const scaleY = +scale / canvas.current.getActiveObject().height;
-            canvas.current.getActiveObject().set("scaleX", scaleX);
-            canvas.current.getActiveObject().set("scaleY", scaleY);
+          if (selectedModel.current === "Mug") {
+            const uniformScale =
+              +scale / canvas.current.getActiveObject().width;
+            canvas.current.getActiveObject().set("scaleX", uniformScale);
+            canvas.current.getActiveObject().set("scaleY", uniformScale * 2);
+          } else if (selectedModel.current === "Poster") {
+            const uniformScale =
+              +scale / canvas.current.getActiveObject().width;
+            canvas.current.getActiveObject().set("scaleX", uniformScale * 1.5);
+            canvas.current.getActiveObject().set("scaleY", uniformScale);
           } else {
             const uniformScale =
               +scale / canvas.current.getActiveObject().width;
@@ -446,7 +455,10 @@ function Mainstatetool({ children }) {
                 left: e.target.left,
                 angle: e.target.angle,
                 _id: e.target._id,
-                scale: e.target.width * e.target.scaleX,
+                scale:
+                  selectedModel.current === "Poster"
+                    ? e.target.width * e.target.scaleY
+                    : e.target.width * e.target.scaleX,
               },
             },
             URL_SERVER
@@ -506,7 +518,10 @@ function Mainstatetool({ children }) {
                 left: e.selected[0].left,
                 angle: e.selected[0].angle,
                 _id: e.selected[0]._id,
-                scale: e.selected[0].width * e.selected[0].scaleX,
+                scale:
+                  selectedModel.current === "Poster"
+                    ? e.selected[0].width * e.selected[0].scaleY
+                    : e.selected[0].width * e.selected[0].scaleX,
               },
             },
             URL_SERVER
@@ -566,7 +581,10 @@ function Mainstatetool({ children }) {
                 left: e.selected[0].left,
                 angle: e.selected[0].angle,
                 _id: e.selected[0]._id,
-                scale: e.selected[0].width * e.selected[0].scaleX,
+                scale:
+                  selectedModel.current === "Poster"
+                    ? e.selected[0].width * e.selected[0].scaleY
+                    : e.selected[0].width * e.selected[0].scaleX,
               },
             },
             URL_SERVER

@@ -259,7 +259,7 @@ const CanvasTexture = React.memo(({ flip }) => {
   return (
     <meshMatcapMaterial
       polygonOffset
-      polygonOffsetFactor={10}
+      // polygonOffsetFactor={10}
       transparent
       toneMapped={true}
     >
