@@ -61,6 +61,9 @@ document.querySelector(".product-buttons").addEventListener("click", (e) => {
     Images.forEach((it) => (it.prevRotation = undefined));
     selectedText = false;
     selectedImage = false;
+    document
+      .querySelector(".selected_layer")
+      ?.classList.remove("selected_layer");
 
     if (SELECTED_MODEL === "Mug") {
       size_slider_image.max = 920;
