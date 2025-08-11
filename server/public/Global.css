@@ -958,6 +958,7 @@ button {
   border-radius: 10px;
   border: 1px solid gray;
   padding-inline: 6px;
+  cursor: pointer;
 }
 .text_layers,
 .image_layers {

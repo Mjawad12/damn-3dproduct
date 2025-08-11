@@ -52,7 +52,7 @@ function Mainstatetool({ children }) {
     },
     Mug: {
       width: 920,
-      height: 920,
+      height: 450,
     },
     Cap: {
       width: 200,
@@ -230,18 +230,40 @@ function Mainstatetool({ children }) {
         const targetWidth = ImageSizes[selectedModel.current].width;
         const targetHeight = ImageSizes[selectedModel.current].height;
         if (selectedModel.current === "Mug") {
-          const scaleFactor = Math.min(
-            targetWidth / img.width,
-            targetHeight / img.height
-          );
+          const widthRatio = targetWidth / img.width;
+          const heightRatio = targetHeight / img.height;
+          let scaleFactor;
+          if (img.height > img.width) {
+            scaleFactor = heightRatio;
+          } else {
+            scaleFactor = widthRatio;
+          }
 
           img.scaleX = scaleFactor;
           img.scaleY = scaleFactor * 2;
         } else if (selectedModel.current === "Poster") {
-          const scaleFactor = targetWidth / img.width;
+          const widthRatio = targetWidth / img.width;
+          const heightRatio = targetHeight / img.height;
+
+          let scaleFactor;
+
+          if (img.height > img.width) {
+            scaleFactor = heightRatio;
+          } else {
+            scaleFactor = widthRatio;
+          }
 
           img.scaleX = scaleFactor * 1.5;
           img.scaleY = scaleFactor;
+
+          canvas.current.renderAll();
+          img.filters.push(
+            new fabric.Image.filters.Brightness({
+              brightness: 0.07,
+            })
+          );
+
+          img.applyFilters();
         } else {
           const scaleFactor = Math.min(
             targetWidth / img.width,
@@ -663,10 +685,7 @@ function Mainstatetool({ children }) {
       if (!payload) {
         return;
       }
-      if (event.origin !== process.env.NEXT_PUBLIC_URL) {
-        console.log("Not Allowed");
-        return;
-      }
+
       console.log(payload);
       switch (type) {
         case "add-text":
@@ -782,6 +801,13 @@ function Mainstatetool({ children }) {
         case "reset-view":
           canvas.current.clear();
           changeColor("#ffffff");
+          break;
+        case "select-layer":
+          const layer_sel = canvas.current
+            .getObjects()
+            .find((it) => it._id === payload._id);
+          layer_sel && canvas.current.setActiveObject(layer_sel);
+          canvas.current.renderAll();
           break;
         case "ini-layers":
           const TextsLay = payload.textLayers;

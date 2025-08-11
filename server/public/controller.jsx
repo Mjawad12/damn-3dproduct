@@ -154,6 +154,10 @@ const CreateTextLayer = (text, id) => {
   textLayer.setAttribute("data-id", id);
   textLayer.className = "text_layer";
 
+  textLayer.onclick = function () {
+    postToIframe({ type: "select-layer", payload: { _id: id } });
+  };
+
   // Create the inner container with flex row
   const flexRow = document.createElement("div");
   flexRow.style.display = "flex";
@@ -281,6 +285,10 @@ const CreateImageLayer = (url, id) => {
   const imageLayer = document.createElement("div");
   imageLayer.setAttribute("data-id", id);
   imageLayer.className = "image_layer";
+
+  imageLayer.onclick = function () {
+    postToIframe({ type: "select-layer", payload: { _id: id } });
+  };
 
   // Wrapper for image and icon
   const flexRow = document.createElement("div");
@@ -446,7 +454,7 @@ rot_slider.addEventListener("input", (e) => {
     const diff = newValue - selectedObj.prevRotation;
 
     // Apply difference to current left
-    selectedObj.angle += diff;
+    selectedObj.angle += diff * 0.5;
 
     // Update previous value
     selectedObj.prevRotation = newValue;
@@ -611,7 +619,7 @@ rot_slider_image.addEventListener("input", (e) => {
     const diff = newValue - selectedObj.prevRotation;
 
     // Apply difference to current left
-    selectedObj.angle += diff;
+    selectedObj.angle += diff * 0.5;
 
     // Update previous value
     selectedObj.prevRotation = newValue;
@@ -653,6 +661,8 @@ const updateImage = (payload) => {
   postToIframe({ type: "update-image", payload: payload });
 };
 
+//  select layer
+
 // receive messages
 window.addEventListener("message", (event) => {
   const { type, payload } = event.data;
@@ -665,12 +675,12 @@ window.addEventListener("message", (event) => {
   switch (type) {
     case "update-text":
       selectedText = Texts.findIndex((ele) => ele._id === payload._id);
-      updateSelectedLayer();
+      updateSelectedLayer(payload);
       console.log(selectedText);
       X_slider.value = payload.left;
       Y_slider.value = payload.top;
       size_slider.value = payload.fontSize;
-      rot_slider.value = payload.angle;
+      rot_slider.value = payload.angle * 2;
       Texts[selectedText] = { ...payload };
       break;
     case "select-clear":
@@ -687,7 +697,7 @@ window.addEventListener("message", (event) => {
       X_slider_image.value = payload.left;
       Y_slider_image.value = payload.top;
       size_slider_image.value = payload.scale;
-      rot_slider_image.value = payload.angle;
+      rot_slider_image.value = payload.angle * 2;
       Images[selectedImage] = { ...Images[selectedImage], ...payload };
       break;
     case "export-image":

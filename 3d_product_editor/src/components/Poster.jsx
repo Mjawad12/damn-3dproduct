@@ -28,7 +28,11 @@ export function Poster(props) {
 
   return (
     <group {...props} dispose={null}>
-      <group name="Scene" scale={0.25} rotation={[0, Math.PI / 2, Math.PI / 2]}>
+      <group
+        name="Scene"
+        scale={0.25}
+        rotation={[0, Math.PI / 2, Math.PI / 2.3]}
+      >
         <mesh
           name="Plane007"
           castShadow
