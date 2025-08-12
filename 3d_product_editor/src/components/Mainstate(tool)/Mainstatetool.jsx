@@ -455,7 +455,7 @@ function Mainstatetool({ children }) {
                 fill: e.target.fill,
               },
             },
-            URL_SERVER
+            "*"
           );
           break;
         case "image":
@@ -483,7 +483,7 @@ function Mainstatetool({ children }) {
                     : e.target.width * e.target.scaleX,
               },
             },
-            URL_SERVER
+            "*"
           );
           break;
       }
@@ -518,7 +518,7 @@ function Mainstatetool({ children }) {
                 fontSize: e.selected[0].scaleX,
               },
             },
-            URL_SERVER
+            "*"
           );
           break;
         case "image":
@@ -546,7 +546,7 @@ function Mainstatetool({ children }) {
                     : e.selected[0].width * e.selected[0].scaleX,
               },
             },
-            URL_SERVER
+            "*"
           );
           break;
       }
@@ -581,7 +581,7 @@ function Mainstatetool({ children }) {
                 fontSize: e.selected[0].scaleX,
               },
             },
-            URL_SERVER
+            "*"
           );
           break;
         case "image":
@@ -609,7 +609,7 @@ function Mainstatetool({ children }) {
                     : e.selected[0].width * e.selected[0].scaleX,
               },
             },
-            URL_SERVER
+            "*"
           );
           break;
       }
@@ -645,7 +645,7 @@ function Mainstatetool({ children }) {
           type: "select-clear",
           payload: {},
         },
-        URL_SERVER
+        "*"
       );
       canva.renderAll();
     });
@@ -795,7 +795,7 @@ function Mainstatetool({ children }) {
               type: "export-image",
               payload: { url: url },
             },
-            URL_SERVER
+            "*"
           );
           break;
         case "reset-view":
