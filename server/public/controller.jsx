@@ -2,7 +2,7 @@ const Models = ["Mug", "Shirt", "Cap", "Poster"];
 let SELECTED_MODEL = "Mug";
 let SelectedCustomization = "Image";
 let ProductColor = "#ffffff";
-let AnimatedCanvas = false;
+let AnimatedCanvas = true;
 let IniModel = true;
 
 const Canvas = document.querySelector("#canvas");
@@ -509,21 +509,6 @@ document.querySelector("#color-dor-parent").addEventListener("click", (e) => {
   colorPicker.color.set(e.target.getAttribute("data-color"));
 });
 
-//  Auto Rotate
-document.getElementById("auto-rotate-btn").addEventListener("click", () => {
-  AnimatedCanvas = !AnimatedCanvas;
-  const btn = document.getElementById("auto-rotate-btn");
-  if (AnimatedCanvas) {
-    btn.classList.add("active");
-    btn.textContent = "Stop Rotate";
-    postToIframe({ type: "rotate-control", payload: { enable: true } });
-  } else {
-    btn.classList.remove("active");
-    btn.textContent = "Auto Rotate";
-    postToIframe({ type: "rotate-control", payload: { enable: false } });
-  }
-});
-
 // Image upload
 
 // Image upload functionality
@@ -634,6 +619,7 @@ document.querySelector("#export-view-btn").addEventListener("click", (e) => {
   notifications.show("Design exported!", "success");
 });
 
+// rest view
 document.querySelector("#reset-view-btn").addEventListener("click", (e) => {
   Texts.length = 0;
   Images.length = 0;
@@ -641,6 +627,21 @@ document.querySelector("#reset-view-btn").addEventListener("click", (e) => {
   document.querySelectorAll(".image_layer").forEach((it) => it.remove());
   notifications.show("View has been reset!", "success");
   postToIframe({ type: "reset-view", payload: {} });
+});
+
+//  Auto Rotate
+document.getElementById("auto-rotate-btn").addEventListener("click", () => {
+  AnimatedCanvas = !AnimatedCanvas;
+  const btn = document.getElementById("auto-rotate-btn");
+  if (AnimatedCanvas) {
+    btn.classList.add("active");
+    btn.textContent = "Stop Rotate";
+    postToIframe({ type: "rotate-control", payload: { enable: true } });
+  } else {
+    btn.classList.remove("active");
+    btn.textContent = "Auto Rotate";
+    postToIframe({ type: "rotate-control", payload: { enable: false } });
+  }
 });
 
 //  changes to model

@@ -19,7 +19,7 @@ function Mainstatetool({ children }) {
   const selectedModel = useRef("Shirt");
   const [imagesDisplayed, setimagesDisplayed] = useState([]);
   const [textsCanvas, setTextsCanvas] = useState([]);
-  const [animatedCanvas, setanimatedCanvas] = useState(false);
+  const [animatedCanvas, setanimatedCanvas] = useState(true);
 
   const angles = {
     Shirt: 180,

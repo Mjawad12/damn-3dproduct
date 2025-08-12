@@ -99,7 +99,7 @@ function MainPage() {
               enableZoom={true}
               maxZoom={0.3}
               autoRotate={animatedCanvas}
-              autoRotateSpeed={8}
+              autoRotateSpeed={4}
               target={[0, 0, 0]}
             />
             <PerformanceMonitor
