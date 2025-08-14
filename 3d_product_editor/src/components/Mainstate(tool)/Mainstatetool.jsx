@@ -721,7 +721,6 @@ function Mainstatetool({ children }) {
         return;
       }
 
-      console.log(payload);
       switch (type) {
         case "add-text":
           selectedText.current = {
