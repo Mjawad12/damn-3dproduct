@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-three/drei": "^10.6.1",
     "@react-three/fiber": "^9.3.0",
+    "cloudinary": "^2.7.0",
     "fabric": "5.5.1",
     "fabricjs-react": "^2.1.0",
     "flag-icons": "^7.5.0",
@@ -22,8 +23,10 @@
     "react-dom": "19.1.0",
     "react-toastify": "^11.0.5",
     "rgb-hex": "^4.1.0",
+    "sharp": "^0.34.3",
     "three": "^0.179.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "webfontloader": "^1.6.28"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

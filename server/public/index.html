@@ -510,7 +510,12 @@
               </div>
               <div
                 id="iframe_div"
-                style="width: 100%; height: 579px; z-index: 200"
+                style="
+                  width: 100%;
+                  height: 579px;
+                  z-index: 200;
+                  position: relative;
+                "
               >
                 <iframe
                   id="canvas"
@@ -525,6 +530,24 @@
                 >
                   <div class="loading-spinner"></div>
                   <span id="loading-text">Loading model</span>
+                </div>
+                <div
+                  id="loading-indicator-image"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    background-color: #00000093;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    border-radius: 20px;
+                    display: none;
+                  "
+                >
+                  <div class="loading-indicator" style="display: block">
+                    <div class="loading-spinner"></div>
+                    <span id="loading-text">Removing Background...</span>
+                  </div>
                 </div>
               </div>
 
@@ -558,7 +581,11 @@
               </div>
 
               <div class="configurator-controls" style="min-height: 742px">
-                <div id="image-customization" data-type="image-customization">
+                <div
+                  id="image-customization"
+                  style="display: block"
+                  data-type="image-customization"
+                >
                   <div class="control-group">
                     <label class="control-label">Upload Image</label>
                     <div class="upload-area" id="upload-area">
@@ -576,7 +603,21 @@
                       class="control-group"
                       style="width: 100%; margin-top: 12px"
                     >
-                      <label class="control-label">Image Layers</label>
+                      <div
+                        style="
+                          display: flex;
+                          flex-direction: row;
+                          justify-content: space-between;
+                          align-items: center;
+                        "
+                      >
+                        <label class="control-label" style="margin-top: 6px"
+                          >Image Layers</label
+                        >
+                        <button class="remove-bg-btn control-btn">
+                          Remove Bg
+                        </button>
+                      </div>
                       <div class="image_layers"></div>
                     </div>
                   </div>
@@ -701,19 +742,22 @@
                 >
                   <div class="control-group">
                     <label class="control-label">Add Text</label>
-                    <input
+                    <textarea
                       id="add_text_inp"
                       type="text"
                       class=""
                       style="
                         width: 100%;
-                        height: 35px;
+                        min-height: 35px;
                         border-radius: 10px;
                         outline: none;
                         border: 1px solid gray;
                         padding-inline: 10px;
+                        resize: none;
+                        field-sizing: content;
+                        padding-block: 9px;
                       "
-                    />
+                    ></textarea>
                     <button
                       id="add_text"
                       class="active"
@@ -736,6 +780,7 @@
                     <label class="control-label">Text Layers</label>
                     <div class="text_layers"></div>
                   </div>
+
                   <div class="control-group" style="width: 100%">
                     <label class="control-label">Text Color</label>
                     <input
@@ -749,6 +794,22 @@
                         padding-inline: 10px;
                       "
                     />
+                  </div>
+                  <div class="control-group" style="width: 100%">
+                    <label class="control-label">Fonts</label>
+                    <div
+                      class="font-inp"
+                      style="
+                        width: 100%;
+                        height: 30px;
+                        border-radius: 10px;
+                        padding-inline: 10px;
+                      "
+                    >
+                      <select>
+                        <option>System UI</option>
+                      </select>
+                    </div>
                   </div>
                   <div class="control-group">
                     <label class="control-label">Text Size</label>
@@ -773,28 +834,29 @@
                       <span>Large</span>
                     </div>
                   </div>
-
-                  <div
-                    class="control-group poster-specific"
-                    style="display: none"
-                  >
-                    <label class="control-label">Poster Frame Style</label>
-                    <div class="control-buttons">
-                      <button
-                        class="control-btn frame-btn active"
-                        data-frame="wood"
-                      >
-                        Wood
-                      </button>
-                      <button class="control-btn frame-btn" data-frame="metal">
-                        Metal
-                      </button>
-                      <button
-                        class="control-btn frame-btn"
-                        data-frame="minimal"
-                      >
-                        Minimal
-                      </button>
+                  <div class="control-group" style="width: 100%">
+                    <label class="control-label" style="margin-bottom: -4px"
+                      >Line Height</label
+                    >
+                    <input
+                      type="range"
+                      class="control-slider"
+                      id="line-height-slider"
+                      min="0.1"
+                      max="4"
+                      step="0.15"
+                      value="2"
+                    />
+                    <div
+                      style="
+                        display: flex;
+                        justify-content: space-between;
+                        font-size: 12px;
+                        color: #666;
+                      "
+                    >
+                      <span>Small</span>
+                      <span>Large</span>
                     </div>
                   </div>
 

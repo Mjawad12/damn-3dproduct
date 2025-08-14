@@ -5,6 +5,8 @@ let ProductColor = "#ffffff";
 let AnimatedCanvas = true;
 let IniModel = true;
 
+let Loading = false;
+
 const Canvas = document.querySelector("#canvas");
 Canvas.src = `https://damn-3dproduct-mpb8.vercel.app/?model=${SELECTED_MODEL}`;
 
@@ -23,6 +25,9 @@ const X_slider = document.querySelector("#text-customization #x-position");
 const Y_slider = document.querySelector("#text-customization #y-position");
 const rot_slider = document.querySelector(
   "#text-customization #rotation-slider"
+);
+const line_height_slider = document.querySelector(
+  "#text-customization #line-height-slider"
 );
 
 //  image sliders
@@ -55,6 +60,12 @@ Canvas.addEventListener("load", (e) => {
 
 document.querySelector(".product-buttons").addEventListener("click", (e) => {
   if (SELECTED_MODEL !== e.target.getAttribute("data-product")) {
+    // animate canvas
+    AnimatedCanvas = true;
+    const btn = document.getElementById("auto-rotate-btn");
+    btn.classList.add("active");
+    btn.textContent = "Stop Rotate";
+
     IniModel = false;
     SELECTED_MODEL = e.target.getAttribute("data-product");
     Texts.forEach((it) => (it.prevRotation = undefined));
@@ -213,7 +224,7 @@ const CreateTextLayer = (text, id) => {
 
   // Create the span
   const span = document.createElement("span");
-  span.textContent = text.slice(0, 30);
+  span.textContent = text.slice(0, 15);
 
   // Append svg and span to the flex row
   flexRow.appendChild(svg1);
@@ -463,6 +474,14 @@ rot_slider.addEventListener("input", (e) => {
   });
 });
 
+//  line  height slider
+line_height_slider.addEventListener("input", (e) => {
+  TextMessageWrapper(() => {
+    Texts[selectedText].lineHeight = e.target.value;
+    updateText({ lineHeight: Texts[selectedText].lineHeight });
+  });
+});
+
 // update text Color
 Coloris({
   themeMode: "dark",
@@ -488,6 +507,63 @@ var colorPicker = new iro.ColorPicker("#picker", {
       },
     },
   ],
+});
+
+//  add fonts
+const fonts = [
+  "Arial",
+  "Verdana",
+  "Tahoma",
+  "Calibri",
+  "Trebuchet MS",
+  "Times New Roman",
+  "Georgia",
+  "Garamond",
+  "Courier New",
+  "Brush Script MT",
+  "Roboto",
+  "Hammersmith One",
+  "Ultra",
+  "Pacifico",
+  "Ga Maamli",
+  "Lobster",
+  "Oswald",
+  "Montserrat",
+  "Rancho",
+  "Reggae One",
+  "Sansita",
+  "Praise",
+  "Poppins",
+  "Raleway",
+  "Anton",
+  "Bebas Neue",
+  "Playfair Display",
+  "Ubuntu",
+  "Hanalei",
+  "Stalinist One",
+  "Bad Script",
+  "IM Fell Double Pica",
+  "IM Fell English",
+  "Merriweather",
+  "Pangolin",
+  "Open Sans",
+  "Catamaran",
+  "Shadows Into Light",
+];
+
+const selectEleFont = document.querySelector(".font-inp > select");
+
+selectEleFont.addEventListener("input", (e) => {
+  TextMessageWrapper(() => {
+    updateText({ fontFamily: e.target.value });
+  });
+});
+
+fonts.forEach((it) => {
+  const option = document.createElement("option");
+  option.innerText = it;
+  option.setAttribute("data-font", it);
+  selectEleFont.appendChild(option);
 });
 
 // update Model Color
@@ -613,6 +689,23 @@ rot_slider_image.addEventListener("input", (e) => {
   });
 });
 
+// remove bg image
+document.querySelector(".remove-bg-btn").addEventListener("click", (e) => {
+  ImageMessageWrapper(() => {
+    if (Images[selectedImage].backgroundRemoved) {
+      !notifications.showing &&
+        notifications.show("Backgound Already Removed", "success");
+    } else {
+      document.querySelector("#loading-indicator-image").style.display =
+        "block";
+      postToIframe({
+        type: "remove-bg",
+        payload: { _id: Images[selectedImage]._id },
+      });
+    }
+  });
+});
+
 // Export design
 document.querySelector("#export-view-btn").addEventListener("click", (e) => {
   postToIframe({ type: "export-data", payload: {} });
@@ -653,16 +746,23 @@ function postToIframe(data) {
     );
   }
 }
-//  changes to Text
+//  update Text
 const updateText = (payload) => {
   postToIframe({ type: "update-text", payload: payload });
 };
 
+//  update image
 const updateImage = (payload) => {
   postToIframe({ type: "update-image", payload: payload });
 };
 
 //  select layer
+const updateSelectedLayer = (payload) => {
+  document.querySelector(".selected_layer")?.classList.remove("selected_layer");
+  document
+    .querySelector(`[data-id='${payload._id}']`)
+    .classList.add("selected_layer");
+};
 
 // receive messages
 window.addEventListener("message", (event) => {
@@ -671,7 +771,7 @@ window.addEventListener("message", (event) => {
     return;
   }
 
-  console.log(payload);
+  // console.log(payload);
 
   switch (type) {
     case "update-text":
@@ -682,6 +782,8 @@ window.addEventListener("message", (event) => {
       Y_slider.value = payload.top;
       size_slider.value = payload.fontSize;
       rot_slider.value = payload.angle * 2;
+      selectEleFont.value = payload.fontFamily;
+      line_height_slider.value = payload.lineHeight;
       Texts[selectedText] = { ...payload };
       break;
     case "select-clear":
@@ -707,12 +809,11 @@ window.addEventListener("message", (event) => {
       link.download = "Exported Design.png";
       link.click();
       break;
+    case "loading-false-image":
+      document.querySelector("#loading-indicator-image").style.display = "none";
+      selectedImage = Images.findIndex((ele) => ele._id === payload._id);
+      Images[selectedImage].url = payload.url;
+      Images[selectedImage].backgroundRemoved = true;
+      break;
   }
 });
-
-const updateSelectedLayer = (payload) => {
-  document.querySelector(".selected_layer")?.classList.remove("selected_layer");
-  document
-    .querySelector(`[data-id='${payload._id}']`)
-    .classList.add("selected_layer");
-};

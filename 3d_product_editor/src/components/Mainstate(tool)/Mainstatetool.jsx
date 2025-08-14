@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { fabric } from "fabric";
-import { v4 } from "uuid";
+import { removeBg } from "@/actions";
 
 const URL_SERVER = process.env.NEXT_PUBLIC_URL;
 
@@ -171,6 +171,8 @@ function Mainstatetool({ children }) {
     top: 5,
     left: 5,
     fontSize: 2,
+    fontFamily: "Times New Roman",
+    lineHeight: "0.7",
   });
 
   const selectedImage = useRef({
@@ -200,6 +202,7 @@ function Mainstatetool({ children }) {
       scaleX: fontSize[selectedModel.current],
       scaleY: scaleY,
       _id: _id,
+      lineHeight: "0.7",
     });
     console.log(selectedModel.current);
     textBox.setPositionByOrigin(
@@ -301,7 +304,9 @@ function Mainstatetool({ children }) {
       left = selectedText.current.left,
       fontSize = selectedText.current.fontSize,
       angle = selectedText.current.angle,
-      fill = selectedText.current.fill
+      fill = selectedText.current.fill,
+      fontFamily,
+      lineHeight = selectedText.current.lineHeight
     ) => {
       if (
         canvas.current.getActiveObject() &&
@@ -311,6 +316,13 @@ function Mainstatetool({ children }) {
         canvas.current.getActiveObject().set("top", +top);
         canvas.current.getActiveObject().set("left", +left);
         canvas.current.getActiveObject().set("angle", +angle);
+        canvas.current.getActiveObject().set("lineHeight", lineHeight);
+        if (fontFamily) {
+          canvas.current.getActiveObject().set("fontFamily", fontFamily);
+          canvas.current.getActiveObject().set("width", 0);
+          canvas.current.getActiveObject().initDimensions();
+          canvas.current.getActiveObject().setCoords();
+        }
         canvas.current.getActiveObject().set("fill", fill);
         let scaleY = +fontSize;
         if (selectedModel.current === "Mug") {
@@ -441,6 +453,8 @@ function Mainstatetool({ children }) {
             angle: e.target.angle,
             fontSize: e.target.scaleX,
             fill: e.target.fill,
+            fontFamily: e.target.fontFamily,
+            lineHeight: e.target.lineHeight,
           };
           window.parent.postMessage(
             {
@@ -453,6 +467,8 @@ function Mainstatetool({ children }) {
                 _id: e.target._id,
                 fontSize: e.target.scaleX,
                 fill: e.target.fill,
+                fontFamily: e.target.fontFamily,
+                lineHeight: e.target.lineHeight,
               },
             },
             "*"
@@ -505,6 +521,8 @@ function Mainstatetool({ children }) {
             angle: e.selected[0].angle,
             fontSize: e.selected[0].scaleX,
             fill: e.selected[0].fill,
+            fontFamily: e.selected[0].fontFamily,
+            lineHeight: e.selected[0].lineHeight,
           };
           window.parent.postMessage(
             {
@@ -516,6 +534,8 @@ function Mainstatetool({ children }) {
                 angle: e.selected[0].angle,
                 _id: e.selected[0]._id,
                 fontSize: e.selected[0].scaleX,
+                fontFamily: e.selected[0].fontFamily,
+                lineHeight: e.selected[0].lineHeight,
               },
             },
             "*"
@@ -568,6 +588,8 @@ function Mainstatetool({ children }) {
             fontSize: e.selected[0].scaleX,
             fill: e.selected[0].fill,
             angle: e.selected[0].angle,
+            fontFamily: e.selected[0].fontFamily,
+            lineHeight: e.selected[0].lineHeight,
           };
           window.parent.postMessage(
             {
@@ -579,6 +601,8 @@ function Mainstatetool({ children }) {
                 angle: e.selected[0].angle,
                 _id: e.selected[0]._id,
                 fontSize: e.selected[0].scaleX,
+                fontFamily: e.selected[0].fontFamily,
+                lineHeight: e.selected[0].lineHeight,
               },
             },
             "*"
@@ -679,6 +703,17 @@ function Mainstatetool({ children }) {
     }, 100);
   };
 
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result); // This will be like "data:image/jpeg;base64,..."
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
   const EventFunc = useCallback(
     (event) => {
       const { type, payload } = event.data;
@@ -706,7 +741,9 @@ function Mainstatetool({ children }) {
             +payload.left || undefined,
             +payload.fontSize || undefined,
             +payload.angle || undefined,
-            payload.fill
+            payload.fill,
+            payload.fontFamily || undefined,
+            payload.lineHeight || undefined
           );
           break;
         case "add-image":
@@ -815,12 +852,90 @@ function Mainstatetool({ children }) {
           TextsLay.forEach((it) => addTextLayer(it.text, it._id));
           ImagesLay.forEach((it) => addImageLayer(it.url, it.url, it._id));
           break;
+        case "remove-bg":
+          const selectedBg = canvas.current
+            .getObjects()
+            .find((it) => it._id === payload._id);
+
+          removeBg(selectedBg.url).then((e) => {
+            const newUrl = URL.createObjectURL(e);
+            selectedBg.setSrc(newUrl, async () => {
+              canvas.current.renderAll();
+              window.parent.postMessage(
+                {
+                  type: "loading-false-image",
+                  payload: {
+                    loading: false,
+                    url: await blobToBase64(e),
+                    _id: selectedBg._id,
+                    backgroundRemoved: true,
+                  },
+                },
+                "*"
+              );
+            });
+          });
+
+          break;
       }
     },
     [selectedText]
   );
 
+  const loadWebFont = async () => {
+    const WebFont = await import("webfontloader");
+    return WebFont.load;
+  };
+
+  const loadDesireFont = async () => {
+    return new Promise(async (resolve, reject) => {
+      await loadWebFont().then((WebFontLoader) => {
+        WebFontLoader({
+          google: {
+            families: [
+              "Roboto",
+              "Hammersmith One",
+              "Ultra",
+              "Ga Maamli",
+              "Lobster",
+              "Oswald",
+              "Montserrat",
+              "Rancho",
+              "Reggae One",
+              "Sansita",
+              "Praise",
+              "Poppins",
+              "Raleway",
+              "Pacifico",
+              "Anton",
+              "Bebas Neue",
+              "Playfair Display",
+              "Ubuntu",
+              "Hanalei",
+              "Stalinist One",
+              "Bad Script",
+              "IM Fell Double Pica",
+              "IM Fell English",
+              "Merriweather",
+              "Pangolin",
+              "Open Sans",
+              "Catamaran",
+              "Shadows Into Light",
+            ],
+          },
+          active: () => {
+            resolve();
+          },
+          inactive: () => {
+            reject();
+          },
+        });
+      });
+    });
+  };
+
   useEffect(() => {
+    loadDesireFont();
     window.addEventListener("message", EventFunc);
 
     return () => window.removeEventListener("message", EventFunc);
