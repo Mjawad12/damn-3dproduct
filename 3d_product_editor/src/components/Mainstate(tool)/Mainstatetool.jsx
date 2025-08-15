@@ -186,7 +186,7 @@ function Mainstatetool({ children }) {
 
   let canvas = useRef(null);
 
-  const addTextLayer = (textDef, _id) => {
+  const addTextLayer = (textDef, _id, fontFamily = "Times New Roman") => {
     let scaleY = fontSize[selectedModel.current];
     if (selectedModel.current === "Mug") {
       scaleY += 2;
@@ -200,6 +200,7 @@ function Mainstatetool({ children }) {
       scaleY: scaleY,
       _id: _id,
       lineHeight: "0.7",
+      fontFamily: fontFamily,
     });
     textBox.setPositionByOrigin(
       positions[selectedModel.current],
@@ -842,8 +843,12 @@ function Mainstatetool({ children }) {
         case "ini-layers":
           const TextsLay = payload.textLayers;
           const ImagesLay = payload.imageLayers;
-          TextsLay.forEach((it) => addTextLayer(it.text, it._id));
           ImagesLay.forEach((it) => addImageLayer(it.url, it.url, it._id));
+          setTimeout(() => {
+            TextsLay.forEach((it) => {
+              addTextLayer(it.text, it._id, it.fontFamily);
+            });
+          }, 200);
           break;
         case "remove-bg":
           const selectedBg = canvas.current

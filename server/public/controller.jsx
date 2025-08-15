@@ -503,12 +503,18 @@ var colorPicker = new iro.ColorPicker("#picker", {
 
 //  add fonts
 
-const selectEleFont = document.querySelector(".font-inp > select");
+const selectEleFont = document.querySelector(".font-inp");
+const lists = document.querySelector(".custom-dialog>ul");
+const item = document.querySelector(".custom-dialog");
 
-selectEleFont.addEventListener("input", (e) => {
-  TextMessageWrapper(() => {
-    updateText({ fontFamily: e.target.value });
-  });
+selectEleFont.addEventListener("click", (e) => {
+  if (item.classList.contains("open")) {
+    item.classList.remove("open");
+    selectEleFont.classList.remove("rem-bottom-border");
+  } else {
+    item.classList.add("open");
+    selectEleFont.classList.add("rem-bottom-border");
+  }
 });
 
 const systemFonts = [
@@ -574,13 +580,31 @@ WebFont.load({
   },
   active: function () {
     [...systemFonts, ...fonts].forEach((it) => {
-      const option = document.createElement("option");
-      option.innerText = it;
-      option.setAttribute("data-font", it);
-      option.style.fontFamily = it;
-      selectEleFont.appendChild(option);
+      const li = document.createElement("li");
+      li.innerText = it;
+      li.setAttribute("data-font", it);
+      li.style.fontFamily = it;
+      lists.appendChild(li);
+      li.onclick = () => {
+        TextMessageWrapper(() => {
+          const selectedFont = document.querySelector(".selected-font");
+          selectedFont.innerText = it;
+          selectedFont.style.fontFamily = it;
+          selectEleFont.style.fontFamily = it;
+          Texts[selectedText].fontFamily = it;
+          updateText({ fontFamily: it });
+        });
+      };
     });
   },
+});
+
+// Close dropdown when clicking outside
+document.addEventListener("click", (e) => {
+  if (!selectEleFont.contains(e.target)) {
+    item.classList.remove("open");
+    selectEleFont.classList.remove("rem-bottom-border");
+  }
 });
 
 // update Model Color
