@@ -45,11 +45,9 @@ const rot_slider_image = document.querySelector(
 );
 
 Canvas.addEventListener("load", (e) => {
-  console.log("loaded");
   document.querySelector(".loading-indicator").style.display = "none";
   if (!IniModel) {
     setTimeout(() => {
-      console.log("sent");
       postToIframe({
         type: "ini-layers",
         payload: { textLayers: Texts, imageLayers: Images },
@@ -408,19 +406,13 @@ document.querySelector("#add_text").addEventListener("click", () => {
       _id: crypto.randomUUID(),
     };
 
-    // Add to global array
     Texts.push(textObject);
 
-    // Optionally log or debug
-    console.log("Texts Array:", Texts);
-
-    // Post message to iframe
     postToIframe({
       type: "add-text",
       payload: textObject,
     });
 
-    // Clear input
     inputElement.value = "";
     CreateTextLayer(textObject.text, textObject._id);
   }
@@ -510,46 +502,6 @@ var colorPicker = new iro.ColorPicker("#picker", {
 });
 
 //  add fonts
-const fonts = [
-  "Arial",
-  "Verdana",
-  "Tahoma",
-  "Calibri",
-  "Trebuchet MS",
-  "Times New Roman",
-  "Georgia",
-  "Garamond",
-  "Courier New",
-  "Brush Script MT",
-  "Roboto",
-  "Hammersmith One",
-  "Ultra",
-  "Pacifico",
-  "Ga Maamli",
-  "Lobster",
-  "Oswald",
-  "Montserrat",
-  "Rancho",
-  "Reggae One",
-  "Sansita",
-  "Praise",
-  "Poppins",
-  "Raleway",
-  "Anton",
-  "Bebas Neue",
-  "Playfair Display",
-  "Ubuntu",
-  "Hanalei",
-  "Stalinist One",
-  "Bad Script",
-  "IM Fell Double Pica",
-  "IM Fell English",
-  "Merriweather",
-  "Pangolin",
-  "Open Sans",
-  "Catamaran",
-  "Shadows Into Light",
-];
 
 const selectEleFont = document.querySelector(".font-inp > select");
 
@@ -559,11 +511,76 @@ selectEleFont.addEventListener("input", (e) => {
   });
 });
 
-fonts.forEach((it) => {
-  const option = document.createElement("option");
-  option.innerText = it;
-  option.setAttribute("data-font", it);
-  selectEleFont.appendChild(option);
+const systemFonts = [
+  "Arial",
+  "Verdana",
+  "Tahoma",
+  "Trebuchet MS",
+  "Helvetica",
+  "Times New Roman",
+  "Georgia",
+  "Garamond",
+  "Palatino Linotype",
+  "Bookman",
+  "Courier New",
+  "Lucida Console",
+  "Brush Script MT",
+  "Comic Sans MS",
+];
+
+const fonts = [
+  "Roboto",
+  "Hammersmith One",
+  "Ultra",
+  "Pacifico",
+  "Lobster",
+  "Oswald",
+  "Montserrat",
+  "Poppins",
+  "Raleway",
+  "Anton",
+  "Bebas Neue",
+  "Playfair Display",
+  "Ubuntu",
+  "Merriweather",
+  "Open Sans",
+  "Catamaran",
+  "Shadows Into Light",
+  "Dancing Script",
+  "Josefin Sans",
+  "Nunito",
+  "Fira Sans",
+  "Work Sans",
+  "Kanit",
+  "Exo 2",
+  "Source Sans Pro",
+  "Quicksand",
+  "Great Vibes",
+  "Amatic SC",
+  "Indie Flower",
+  "Cinzel",
+  "Abril Fatface",
+  "Righteous",
+  "Teko",
+  "Zilla Slab",
+  "Fredoka One",
+  "Signika",
+  "Archivo Black",
+];
+
+WebFont.load({
+  google: {
+    families: fonts,
+  },
+  active: function () {
+    [...systemFonts, ...fonts].forEach((it) => {
+      const option = document.createElement("option");
+      option.innerText = it;
+      option.setAttribute("data-font", it);
+      option.style.fontFamily = it;
+      selectEleFont.appendChild(option);
+    });
+  },
 });
 
 // update Model Color
@@ -593,7 +610,6 @@ document.getElementById("upload-area").addEventListener("click", () => {
 });
 
 document.getElementById("image-upload").addEventListener("input", (e) => {
-  console.log(e);
   const file = e.target.files[0];
   if (file) {
     // Validate file type
@@ -606,8 +622,8 @@ document.getElementById("image-upload").addEventListener("input", (e) => {
       return;
     }
 
-    // Validate file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (2MB limit)
+    if (file.size > 2 * 1024 * 1024) {
       notifications.show(
         "Image file too large. Please use images under 5MB",
         "error"
@@ -771,13 +787,10 @@ window.addEventListener("message", (event) => {
     return;
   }
 
-  // console.log(payload);
-
   switch (type) {
     case "update-text":
       selectedText = Texts.findIndex((ele) => ele._id === payload._id);
       updateSelectedLayer(payload);
-      console.log(selectedText);
       X_slider.value = payload.left;
       Y_slider.value = payload.top;
       size_slider.value = payload.fontSize;
@@ -796,7 +809,6 @@ window.addEventListener("message", (event) => {
     case "update-image":
       selectedImage = Images.findIndex((ele) => ele._id === payload._id);
       updateSelectedLayer(payload);
-      console.log(selectedImage);
       X_slider_image.value = payload.left;
       Y_slider_image.value = payload.top;
       size_slider_image.value = payload.scale;

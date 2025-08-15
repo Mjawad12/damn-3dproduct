@@ -83,7 +83,6 @@ function Mainstatetool({ children }) {
   useEffect(() => {
     if (window.innerWidth < 1062) {
       function touchHandler(event) {
-        console.log("fired");
         let touches = event.changedTouches,
           first = touches[0],
           type = "";
@@ -131,7 +130,6 @@ function Mainstatetool({ children }) {
       document.addEventListener("touchcancel", touchHandler, true);
 
       return () => {
-        console.log("entered");
         document.removeEventListener("touchstart", touchHandler, true);
         document.removeEventListener("touchmove", touchHandler, true);
         document.removeEventListener("touchend", touchHandler, true);
@@ -153,7 +151,6 @@ function Mainstatetool({ children }) {
   const DetectDevice = () => {
     const userAgentString = navigator.userAgent;
     let firefoxAgent = userAgentString.indexOf("Firefox") > -1;
-    console.log(firefoxAgent, "firefox");
     let chromeAgent = userAgentString.indexOf("Chrome") > -1;
     let safariAgent = userAgentString.indexOf("Safari") > -1;
     if (chromeAgent && safariAgent) {
@@ -204,7 +201,6 @@ function Mainstatetool({ children }) {
       _id: _id,
       lineHeight: "0.7",
     });
-    console.log(selectedModel.current);
     textBox.setPositionByOrigin(
       positions[selectedModel.current],
       "center",
@@ -349,7 +345,6 @@ function Mainstatetool({ children }) {
         canvas.current.getActiveObject() &&
         canvas.current.getActiveObject().typeObj === "image"
       ) {
-        console.log(selectedImage.current);
         if (scale) {
           if (selectedModel.current === "Mug") {
             const uniformScale =
@@ -394,7 +389,6 @@ function Mainstatetool({ children }) {
     fabric.Group.prototype.hasControls = false;
 
     canva.on("object:modified", (e) => {
-      console.log(e.target);
       orbitRef.current.enableRotate = true;
       if (
         e.target.top == 0 ||
@@ -895,31 +889,40 @@ function Mainstatetool({ children }) {
               "Roboto",
               "Hammersmith One",
               "Ultra",
-              "Ga Maamli",
+              "Pacifico",
               "Lobster",
               "Oswald",
               "Montserrat",
-              "Rancho",
-              "Reggae One",
-              "Sansita",
-              "Praise",
               "Poppins",
               "Raleway",
-              "Pacifico",
               "Anton",
               "Bebas Neue",
               "Playfair Display",
               "Ubuntu",
-              "Hanalei",
-              "Stalinist One",
-              "Bad Script",
-              "IM Fell Double Pica",
-              "IM Fell English",
               "Merriweather",
-              "Pangolin",
               "Open Sans",
               "Catamaran",
               "Shadows Into Light",
+              "Dancing Script",
+              "Josefin Sans",
+              "Nunito",
+              "Fira Sans",
+              "Work Sans",
+              "Kanit",
+              "Exo 2",
+              "Source Sans Pro",
+              "Quicksand",
+              "Great Vibes",
+              "Amatic SC",
+              "Indie Flower",
+              "Cinzel",
+              "Abril Fatface",
+              "Righteous",
+              "Teko",
+              "Zilla Slab",
+              "Fredoka One",
+              "Signika",
+              "Archivo Black",
             ],
           },
           active: () => {
@@ -936,7 +939,16 @@ function Mainstatetool({ children }) {
   useEffect(() => {
     loadDesireFont();
     window.addEventListener("message", EventFunc);
-
+    window.addEventListener("error", function (event) {
+      if (
+        event.message.includes(
+          "Cannot read properties of undefined (reading 'object')"
+        ) ||
+        event.message.includes("Cannot read properties of null (reading 'uv')")
+      ) {
+        event.preventDefault();
+      }
+    });
     return () => window.removeEventListener("message", EventFunc);
   }, []);
 

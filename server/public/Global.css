@@ -990,4 +990,5 @@ button {
 
 .font-inp > select > option {
   width: 200%;
+  font-size: 17px;
 }
