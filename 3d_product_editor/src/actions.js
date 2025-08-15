@@ -1,4 +1,5 @@
 "use server";
+import cloudinary from "cloudinary";
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
