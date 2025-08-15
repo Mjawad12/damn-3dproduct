@@ -854,6 +854,12 @@ function Mainstatetool({ children }) {
             const newUrl = URL.createObjectURL(e);
             selectedBg.setSrc(newUrl, async () => {
               canvas.current.renderAll();
+              updateImage(
+                selectedImage.current.top,
+                selectedImage.current.left,
+                selectedImage.current.angle,
+                selectedImage.current.scale
+              );
               window.parent.postMessage(
                 {
                   type: "loading-false-image",
